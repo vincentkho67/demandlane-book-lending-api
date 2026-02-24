@@ -1,6 +1,9 @@
 # DemandLane Book Lending API
 A REST API for managing book lending operations — user authentication, book catalog management, and loan tracking.
 
+# ERD
+![alt text](./public/erd.png)
+
 ## Requirements
 
 - [Docker](https://docs.docker.com/get-docker/) & Docker Compose
