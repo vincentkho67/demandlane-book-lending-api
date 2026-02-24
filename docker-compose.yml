@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: demandlane-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - demandlane-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demandlane-book-lending-api
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL}
+      SERVER_PORT: ${SERVER_PORT}
+      LOGGING_LEVEL_HIBERNATE_SQL: ${LOGGING_LEVEL_HIBERNATE_SQL}
+      LOGGING_LEVEL_HIBERNATE_BINDER: ${LOGGING_LEVEL_HIBERNATE_BINDER}
+      LOGGING_LEVEL_APP: ${LOGGING_LEVEL_APP}
+      LIBRARY_MAX_ACTIVE_LOANS: ${LIBRARY_MAX_ACTIVE_LOANS}
+      LIBRARY_LOAN_DURATION_DAYS: ${LIBRARY_LOAN_DURATION_DAYS}
+      MANAGEMENT_ENDPOINTS_INCLUDE: ${MANAGEMENT_ENDPOINTS_INCLUDE}
+      MANAGEMENT_HEALTH_SHOW_DETAILS: ${MANAGEMENT_HEALTH_SHOW_DETAILS}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - demandlane-network
+
+volumes:
+  postgres_data:
+
+networks:
+  demandlane-network:
+    driver: bridge
