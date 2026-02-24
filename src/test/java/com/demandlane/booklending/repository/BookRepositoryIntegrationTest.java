@@ -84,6 +84,7 @@ public class BookRepositoryIntegrationTest {
 
     @Test
     void shouldFindAllBooks() {
+        bookRepository.deleteAll(); // Clear existing data from seed
         // Given
         Book book1 = createTestBook();
         Book book2 = createTestBook();
