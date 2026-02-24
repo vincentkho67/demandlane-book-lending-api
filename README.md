@@ -4,6 +4,9 @@ A REST API for managing book lending operations — user authentication, book ca
 # ERD
 ![alt text](./public/erd.png)
 
+# API Documentation
+![alt text](./public/api-documentation.png)
+
 ## Requirements
 
 - [Docker](https://docs.docker.com/get-docker/) & Docker Compose
